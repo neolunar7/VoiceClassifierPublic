@@ -30,7 +30,7 @@ class VoiceDataset(data.Dataset):
         self.sampleLength = 200000 # The number of npy samples to use as input -> 9.07 sec
 
         # Others
-        self.mapper = pd.ExcelFile('~/Downloads/mapper.xlsx')
+        self.mapper = pd.ExcelFile('./resources/mapper.xlsx')
         self.categories = ['Ballad', 'Rock', 'Pop', 'Hiphop', 'Trot', 'Dance', 'RnB']
         self.musicFullName2FullPath = {}
         self.musicFullName2Artist = {}
@@ -93,7 +93,7 @@ class VoiceDataset(data.Dataset):
     def randomSampleFromSingleNpy(self, musicFullName):
         """
             Randomly select the starting point between intervals of 1/6 to 5/6
-            Returns a list of [start idx, end idx]
+            Returns a list of [musicFullName, start idx, end idx]
         """
         sampleNumber = self.musicFullName2SampleNumber[musicFullName]
         startingSample = int(sampleNumber * (1/6))
