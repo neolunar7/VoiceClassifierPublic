@@ -17,6 +17,7 @@ import torch
 '''
 
 # TODO : Split the dataset into Train and Test
+# TODO : Change the path to relative path
 
 class VoiceDataset(data.Dataset):
     def __init__(self, sampleNumber=100):
@@ -36,7 +37,7 @@ class VoiceDataset(data.Dataset):
         self.musicFullName2OfficialMusicName = {}
         self.musicFullName2Tags = {}
         self.musicFullName2Category = {}
-        with open('./music2npylength.pickle', 'rb') as f:
+        with open('./resources/music2npylength.pickle', 'rb') as f:
             self.musicFullName2SampleNumber = pickle.load(f)
         self.dictInitializer()
         self.musicFullNames = list(self.musicFullName2FullPath.keys())
