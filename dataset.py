@@ -32,6 +32,7 @@ class VoiceDataset(data.Dataset):
         # Others
         self.mapper = pd.ExcelFile('./resources/mapper.xlsx')
         self.categories = ['Ballad', 'Rock', 'Pop', 'Hiphop', 'Trot', 'Dance', 'RnB']
+        self.tags = ['husky', 'clean', 'soulful', 'powerful', 'heavy', 'light', 'angang', 'calm', 'exciting', 'still', 'sad', 'sweet', 'groovy', 'drowsy', 'dreamy'] 
         self.musicFullName2FullPath = {}
         self.musicFullName2Artist = {}
         self.musicFullName2OfficialMusicName = {}
@@ -94,6 +95,10 @@ class VoiceDataset(data.Dataset):
         """
             Randomly select the starting point between intervals of 1/6 to 5/6
             Returns a list of [musicFullName, start idx, end idx]
+
+            For songs a bit short, min(endingSample, sampleNumber - self.sampleLength)
+            The purpose of picking samples between point of 1/6and 5/6 is to avoid instrumental parts.
+            To only pick voice samples in the climax.
         """
         sampleNumber = self.musicFullName2SampleNumber[musicFullName]
         startingSample = int(sampleNumber * (1/6))
@@ -113,8 +118,7 @@ class VoiceDataset(data.Dataset):
 
     def tag2vectorInitializer(self):
         self.tag2idx = {}
-        tags = ['husky', 'clean', 'soulful', 'powerful', 'heavy', 'light', 'angang', 'calm', 'exciting', 'still', 'sad', 'sweet', 'groovy', 'drowsy', 'dreamy']
-        for i, tag in enumerate(tags):
+        for i, tag in enumerate(self.tags):
             self.tag2idx[tag.lower()] = i
 
     def tag2vector(self, tagList):
