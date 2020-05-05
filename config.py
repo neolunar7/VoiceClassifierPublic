@@ -60,7 +60,6 @@ def print_args(params):
         size_sub = len(sub_args._group_actions)
         info += f'  {sub_args.title} ({size_sub})\n'
         for i, arg in enumerate(sub_args._group_actions):
-            # prefix = ' ' if i == size_sub-1 else '-'
             prefix = '-'
             info += f'      {prefix} {arg.dest:20s}: {getattr(params, arg.dest)}\n'
     info += '\n'
@@ -68,7 +67,7 @@ def print_args(params):
 
 base_args = parser.add_argument_group('Base args')
 base_args.add_argument('--run_script')
-base_args.add_argument('--debug_mode', type=str2bool, default='0')
+base_args.add_argument('--use_wandb', type=str2bool, default='0')
 base_args.add_argument('--save_path')
 base_args.add_argument('--device', type=str, default='cpu')
 base_args.add_argument('--gpu', type=str)
@@ -84,39 +83,14 @@ wandb_args.add_argument('--tags')
 
 train_args = parser.add_argument_group('Train args')
 train_args.add_argument('--random_seed', type=int, default=2)
-train_args.add_argument('--skip_step', type=int, default=1)
 train_args.add_argument('--num_epochs', type=int, default=50)
-train_args.add_argument('--train_batch', type=int, default=1024)
-train_args.add_argument('--test_batch', type=int, default=1024)
+train_args.add_argument('--train_batch', type=int, default=16)
+train_args.add_argument('--test_batch', type=int, default=16)
 train_args.add_argument('--learning_rate', type=float, default=0.001)
 
-data_args = parser.add_argument_group('Data args')
-data_args.add_argument('--seq_size', type=int, default=5)
-data_args.add_argument('--cut_rate_at_epoch', type=float, default=1)
-data_args.add_argument('--minimum_seq_size_in_user', type=int, default=0)
-data_args.add_argument('--sampling_method', type=str)
-data_args.add_argument('--over_counts', nargs='+', type=int)
-data_args.add_argument('--question_label_type_num', type=int, default=3)
-data_args.add_argument('--random_noise', type=str, default='None')
-
 network_args = parser.add_argument_group('Network args')
-network_args.add_argument('--model_arc', type=str, default='transformer_original')
-network_args.add_argument('--layer_count', type=int, default=2)
-network_args.add_argument('--head_count', type=int, default=8)
-network_args.add_argument('--warm_up_step_count', type=int, default=4000)
-network_args.add_argument('--d_model_count', type=int, default=128)
+network_args.add_argument('--model_arc', type=str, default='CategoryCNN')
 network_args.add_argument('--dropout_rate', type=float, default=0.1)
-network_args.add_argument('--encoder_output_dim', type=int)
-network_args.add_argument('--num_of_output_tags', type=int)
-
-# Inference args
-inference_args = parser.add_argument_group('Inference args')
-inference_args.add_argument('--is_infer', type=str2bool)
-inference_args.add_argument('--inference_result_save', type=str2bool, default=False)
-inference_args.add_argument('--inference_batch', type=int, default=128)
-inference_args.add_argument('--pt', type=int)
-inference_args.add_argument('--inference_dataset', type=str)
-
 
 args = get_args()
 

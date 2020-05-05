@@ -26,7 +26,7 @@ class VoiceDataset(data.Dataset):
         self.n_fft = 2048
         self.hop_length = 512
 
-        self.sampleNumber = sampleNumber
+        self.sampleNumber = sampleNumber # The number of melspectrograms to extract from npy
         self.sampleLength = 200000 # The number of npy samples to use as input -> 9.07 sec
 
         # Others
@@ -43,6 +43,8 @@ class VoiceDataset(data.Dataset):
         self.musicFullNames = list(self.musicFullName2FullPath.keys())
         self.npyMusicFullNameStartIdxEndIdxPairs = [] # [[musicFullName, startIdx, endIdx], ... ]
         self.pairInitializer()
+        self.tag2vectorInitializer()
+        self.category2oneHotVectorInitializer()
 
     def dictInitializer(self):
         for category in self.categories:
@@ -80,9 +82,9 @@ class VoiceDataset(data.Dataset):
         
         # Labels
         category = self.musicFullName2Category[musicFullName]
-        tags = self.musicFullName2Tags[musicFullName]
+        tagList = self.musicFullName2Tags[musicFullName]
 
-        return partialMelSpectrogram, category, tags
+        return torch.Tensor(partialMelSpectrogram), self.category2oneHotVector(category), self.tag2vector(tagList)
 
     def pairInitializer(self):
         for musicFullName in self.musicFullNames:
@@ -109,6 +111,29 @@ class VoiceDataset(data.Dataset):
         duration = librosa.get_duration(npy)
         return duration
 
+    def tag2vectorInitializer(self):
+        self.tag2idx = {}
+        tags = ['husky', 'clean', 'soulful', 'powerful', 'heavy', 'light', 'angang', 'calm', 'exciting', 'still', 'sad', 'sweet', 'groovy', 'drowsy', 'dreamy']
+        for i, tag in enumerate(tags):
+            self.tag2idx[tag.lower()] = i
+
+    def tag2vector(self, tagList):
+        vec = torch.zeros(1, 15) # There are total 15 tags
+        for tag in tagList:
+            vec[0, self.tag2idx[tag.lower()]] = 1
+        return vec
+        
+    def category2oneHotVectorInitializer(self):
+        self.category2idx = {}
+        for i, category in enumerate(self.categories):
+            self.category2idx[category.lower()] = i
+
+    def category2oneHotVector(self, category):
+        oneHotVec = torch.zeros(1, 7)
+        oneHotVec[0, self.category2idx[category.lower()]] = 1
+        return oneHotVec
+            
+
 def test(number):
     random_sample = np.random.randn(number)
     print(len(random_sample))
@@ -118,3 +143,7 @@ def test(number):
 if __name__ == '__main__':
     # test(200000)
     dataset = VoiceDataset()
+    mel, category, tags = dataset[0]
+    print(mel)
+    print(category)
+    print(tags)
