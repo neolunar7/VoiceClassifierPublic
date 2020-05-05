@@ -17,7 +17,6 @@ import torch
 '''
 
 # TODO : Split the dataset into Train and Test
-# TODO : Change the path to relative path
 
 class VoiceDataset(data.Dataset):
     def __init__(self, sampleNumber=100):
@@ -49,7 +48,7 @@ class VoiceDataset(data.Dataset):
     def dictInitializer(self):
         for category in self.categories:
             DF = pd.read_excel(self.mapper, category)
-            path = f"/Users/piljae/Desktop/SeparatedNpys/{category}"
+            path = f"./data/{category}"
             npys = os.listdir(path)
             for npy in npys:
                 fullpath = os.path.join(path, npy)
