@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import librosa
 import torch
+from tqdm import tqdm
 
 '''
     Naming Conventions
@@ -97,7 +98,7 @@ class VoiceDataset(data.Dataset):
         sampleNumber = self.musicFullName2SampleNumber[musicFullName]
         startingSample = int(sampleNumber * (1/6))
         endingSample = int(sampleNumber * (5/6))
-        randomStartingSamples = random.sample(range(startingSample, endingSample), self.sampleNumber)
+        randomStartingSamples = random.sample(range(startingSample, min(endingSample, sampleNumber - self.sampleLength)), self.sampleNumber)
         for startSample in randomStartingSamples:
             endSample = startSample + self.sampleLength
             self.npyMusicFullNameStartIdxEndIdxPairs.append([musicFullName, startSample, endSample])
@@ -133,6 +134,14 @@ class VoiceDataset(data.Dataset):
         return oneHotVec
             
 
+def invalidSpectrogramChecker():
+    voiceDataset = VoiceDataset()
+    count = 0
+    for mel, _, _ in tqdm(voiceDataset):
+        if list(mel.shape)[1] != 391:
+            count += 1
+    print(count)
+
 def test(number):
     random_sample = np.random.randn(number)
     print(len(random_sample))
@@ -141,8 +150,9 @@ def test(number):
 
 if __name__ == '__main__':
     # test(200000)
-    dataset = VoiceDataset()
-    mel, category, tags = dataset[0]
-    print(mel)
-    print(category)
-    print(tags)
+    # dataset = VoiceDataset()
+    # mel, category, tags = dataset[0]
+    # print(mel)
+    # print(category)
+    # print(tags)
+    invalidSpectrogramChecker()
