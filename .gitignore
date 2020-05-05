@@ -1,2 +1,4 @@
-# Ignore all files in data/ directory
+# Ignore all files in specific directories
 data/
+weight/
+
